@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <title>Sign Up</title>
+  <style>
+    h1 {
+      text-align: center;
+      font-size: 2.5em;
+      font-weight: bold;
+      padding-top: 1.2em;
+    }
+
+    form {
+      padding: 40px;
+    }
+
+    input,
+    textarea {
+      margin: 5px;
+      font-size: 1.1em !important;
+      outline: none;
+    }
+
+    input[type=radio],
+    select {
+      width: max-content;
+      padding: 5px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      margin-left: 30px;
+      margin-right: 5px;
+    }
+
+    textarea {
+      height: 80px;
+    }
+
+    #err {
+      display: none;
+      padding: 1.5em;
+      padding-left: 4em;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-top: 1em;
+    }
+  </style>
+
+  <script>
+    const validate = (e) => {
+      e.preventDefault();
+
+      let uname = document.getElementById('username').value;
+      let email = document.getElementById('email').value;
+      let phone = document.getElementById('phone').value;
+      let password = document.getElementById('password').value;
+      let confirmPassword = document.getElementById('confirmPassword').value;
+      let errDiv = document.getElementById('err');
+
+      let errMsg = [];
+      let regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+      if (uname === "") {
+        errMsg.push("Please enter the full name");
+      }
+      if (email === "" || !regex.test(email)) {
+        errMsg.push("Please enter the valid Email address");
+      }
+      if (phone === "" || phone.length > 10 || phone.length < 10 || !(/[0 - 9]/.test(phone))) {
+        errMsg.push("Please enter the valid Phone No.");
+      }
+      if (password === "") {
+        errMsg.push("Please enter the Password");
+      }
+      if (confirmPassword === "") {
+        errMsg.push("Please re-enter the Password");
+      }
+      if (password != confirmPassword) {
+        errMsg.push("Passwords don't match");
+      }
+
+      if (errMsg.length > 0) {
+        errDiv.style.display = "block";
+        let msgs = "";
+
+        for (let i = 0; i < errMsg.length; i++) {
+          msgs += errMsg[i] + "<br/>";
+        }
+
+        errDiv.innerHTML = msgs;
+      }
+      scrollTo(0, 0);
+
+      const data = { email, uname, password };
+      axios.post('/signup', data)
+      .then(res => {
+        if (res.status == 200) {
+          alert("SignUp Successfull! Please LogIn to Continue");
+          location.replace("http://localhost:3000");
+        }
+      })
+      .catch(err => console.log(err));
+
+    }
+  </script>
+</head>
+
+<body>
+
+  <!-- navbar -->
+  <nav class="navbar header-nav navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Employee Leave Management</a>
+
+      <a id="home" href="index.html">Home</a>
+    </div>
+  </nav>
+
+  <h1>Registration Form</h1>
+
+  <div class="alert alert-danger" id="err" role="alert">
+  </div>
+
+  <!--form-->
+  <form onsubmit="validate(event)" autocomplete="off">
+
+    <!--username-->
+    <div class="form-floating mb-3">
+      <input type="text" class="form-control" id="username" placeholder="name@example.com">
+      <label for="username">Name</label>
+    </div>
+
+    <!--Email id-->
+    <div class="form-floating mb-3">
+      <input class="form-control" type="text" id="email" placeholder="Enter your email">
+      <label for="email">Email address</label>
+    </div>
+
+    <!--Phone No.-->
+    <div class="form-floating mb-3">
+      <input class="form-control" type="tel" id="phone" placeholder="Enter your Phone no.">
+      <label for="phone">Phone No.</label>
+    </div>
+
+    <!--Password.-->
+    <div class="form-floating mb-3">
+      <input class="form-control" type="password" id="password" placeholder="Enter password">
+      <label for="password">Password</label>
+    </div>
+
+    <!--Confirm Password.-->
+    <div class="form-floating mb-3">
+      <input class="form-control" type="password" id="confirmPassword" placeholder="Re-Enter password">
+      <label for="confirmPassword">Confirm Password</label>
+    </div>
+
+    <label for="gender">Gender:</label>
+    <input type="radio">Male
+    <input type="radio">Female
+    <input type="radio">Prefer Not to say
+
+    <br>
+
+    <label for="city">City:</label>
+    <select id="city">
+      <option>Rajkot</option>
+      <option>Ahmedabad</option>
+      <option>Gandhinagar</option>
+      <option>Banglore</option>
+      <option>Hyderabad</option>
+      <option>Noida</option>
+      <option>Gurugram</option>
+      <option>Pune</option>
+    </select>
+
+    <br>
+
+    <label>Department : </label>
+    <select name="Department">
+      <option>Engineering</option>
+      <option>IT Support</option>
+      <option>HR</option>
+      <option>Finance</option>
+      <option>Marketing and Sales</option>
+    </select>
+
+    <br>
+
+    <input type="submit" value="Submit" class="btn btn-outline-success">
+  </form>
+
+  <!--Footer-->
+  <footer class="footer navbar navbar-expand-lg navbar-light bg-light">
+    <div>
+      <p class="text-center">&copy; Employee Management System, March 2021</p>
+      <p class="text-center">Created By: <strong>Darshan Mamtani</strong> and <strong>Yash Sojitra</strong></p>
+    </div>
+  </footer>
+
+
+</body>
+
+</html>
